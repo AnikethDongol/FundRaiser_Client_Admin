@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowdfunding Platform - Search Fundraisers</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html">Search Fundraisers</a></li>
+		<li><a href="fundraiser.html">Fundraisers Detail</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Search Fundraisers</h1>
+        <!-- index.html or donation.html -->
+<form id="search-form">
+    <label for="organizer">Organizer:</label>
+    <input type="text" id="organizer" name="organizer" placeholder="Enter organizer's name">
+
+    <label for="city">City:</label>
+    <input type="text" id="city" name="city" placeholder="Enter city">
+
+    <label for="category">Category:</label>
+    <select id="category" name="category">
+        <option value="">Select category</option>
+        <option value="1">Education</option>
+        <option value="2">Healthcare</option>
+        <option value="3">Environment</option>
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+
+        <div id="search-results"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Crowdfunding Platform. All rights reserved.</p>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

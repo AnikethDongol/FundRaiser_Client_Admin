@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrowdCare Admin - Manage Fundraisers and Doctors</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">CrowdCare Admin</div>
+            <ul>
+                <li><a href="./admin_index.html">Home</a></li>
+                <li><a href="./update.html">Update Fundraiser</a></li>
+                <li><a href="./delete.html">Delete Fundraiser</a></li>
+                <li><a href="../usernameA2-clientside/index.html">Client</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="fundraiser-list">
+            <h2>Fundraisers</h2>
+            <div id="fundraiser-list" class="fundraiser-grid">
+                
+            </div>
+        </section>
+
+        <form id="add-fundraiser-form">
+            <h2>Add Fundraiser</h2>
+            <input type="text" id="new-organizer" placeholder="Organizer Name" required>
+            <input type="text" id="new-caption" placeholder="Caption" required>
+            <input type="number" id="new-goal" placeholder="Funding Goal" required>
+            <input type="text" id="new-city" placeholder="City" required>
+            <select id="new-category" required>
+                <option value="">Select Category</option>
+            </select>
+            <button type="submit">SAVE</button>
+        </form>
+
+        <p id="success-message" style="display: none; color: green;">Fundraiser added successfully!</p>
+    </main>
+
+    <footer>
+        <div class="copyright">
+            <p>&copy; 2024 CrowdCare. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const apiBaseUrl = 'http://localhost:3000/api/fundraisers'; 
+        const apiCategoriesUrl = 'http://localhost:3000/api/categories';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadFundraisers(); 
+            await fetchCategories(); 
+        });
+
+        async function loadFundraisers() {
+            try {
+                const response = await fetch(apiBaseUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const fundraisers = await response.json();
+
+                const detailsElement = document.getElementById('fundraiser-list');
+                if (fundraisers.length > 0) {
+                    detailsElement.innerHTML = fundraisers.map(fundraiser => `
+                        <div class="fundraiser" data-id="${fundraiser.ID}">
+                            <h3>${fundraiser.CAPTION}</h3>
+                            <p>Organizer: ${fundraiser.ORGANIZER}</p>
+                            <p>Goal: $${parseFloat(fundraiser.TARGET_FUNDING).toFixed(2)}</p>
+                            <p>Raised: $${parseFloat(fundraiser.CURRENT_FUNDING).toFixed(2)}</p>
+                            <p>City: ${fundraiser.CITY}</p>
+                            <p>Category: ${fundraiser.CATEGORY_NAME}</p>
+                            <p>Status: ${fundraiser.ACTIVE ? "Active" : "Inactive"}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    detailsElement.innerHTML = '<p>No fundraisers found.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading fundraisers:', error);
+                const detailsElement = document.getElementById('fundraiser-list');
+                detailsElement.innerHTML = '<p>Error loading fundraisers. Please try again later.</p>';
+            }
+        }
+
+        async function fetchCategories() {
+            try {
+                const response = await fetch(apiCategoriesUrl);
+                const categories = await response.json();
+                const categorySelectAdd = document.getElementById('new-category');
+
+                categorySelectAdd.innerHTML = '<option value="">Select Category</option>';
+
+                categories.forEach(category => {
+                    const optionAdd = document.createElement('option');
+                    optionAdd.value = category.CATEGORY_ID; 
+                    optionAdd.textContent = category.NAME; 
+                    categorySelectAdd.appendChild(optionAdd);
+                });
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
+
+        document.getElementById('add-fundraiser-form').addEventListener('submit', async function(event) {
+            event.preventDefault();  // Prevent form from reloading the page
+
+            const organizer = document.getElementById('new-organizer').value;
+            const caption = document.getElementById('new-caption').value;
+            const goal = document.getElementById('new-goal').value;
+            const city = document.getElementById('new-city').value;
+            const category_id = document.getElementById('new-category').value;
+
+            const fundraiserData = {
+                organizer,
+                caption,
+                goal,
+                city,
+                category_id
+            };
+
+            try {
+                const response = await fetch(apiBaseUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fundraiserData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add fundraiser');
+                }
+
+                const newFundraiser = await response.json();
+                console.log('Fundraiser added:', newFundraiser);
+                document.getElementById('success-message').style.display = 'block';
+                await loadFundraisers(); 
+            } catch (error) {
+                console.error('Error adding fundraiser:', error);
+                alert('Error adding fundraiser: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrowdCare Admin - Manage Fundraisers</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">CrowdCare Admin</div>
+            <ul>
+                <li><a href="./admin_index.html">Home</a></li>
+                <li><a href="./update.html">Update Fundraiser</a></li>
+                <li><a href="./delete.html">Delete Fundraiser</a></li>
+
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="update-fundraiser">
+            <h2>Update Fundraiser</h2>
+            <label for="fundraiser-select">Select Fundraiser:</label>
+            <select id="fundraiser-select" required>
+                <option value="">Select a fundraiser</option>
+            </select>
+            <form id="update-fundraiser-form">
+                <label for="update-caption">Caption:</label>
+                <input type="text" id="update-caption" name="caption" required>
+        
+                <label for="update-goal">Funding Goal:</label>
+                <input type="number" id="update-goal" name="target_funding" required>
+        
+                <label for="update-city">City:</label>
+                <input type="text" id="update-city" name="city" required>
+        
+                <label for="update-category">Category:</label>
+                <select id="update-category" name="category_id" required>
+                    <option value="">Select Category</option>
+                </select>
+        
+                <input type="hidden" id="update-id" name="id">
+        
+                <button type="submit">Update Fundraiser</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="copyright">
+            <p>&copy; 2024 CrowdCare. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const apiBaseUrl = 'http://localhost:3000/api/fundraisers'; 
+        const apiCategoriesUrl = 'http://localhost:3000/api/categories'; 
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchFundraisers();
+            await fetchCategories();
+        });
+
+        async function fetchFundraisers() {
+            try {
+                const response = await fetch(apiBaseUrl);
+                const fundraisers = await response.json();
+                console.log('Fundraisers fetched:', fundraisers); 
+                populateFundraiserDropdown(fundraisers);
+            } catch (error) {
+                console.error('Error fetching fundraisers:', error);
+            }
+        }
+
+        function populateFundraiserDropdown(fundraisers) {
+            const fundraiserSelect = document.getElementById('fundraiser-select');
+            fundraiserSelect.innerHTML = '<option value="">Select a fundraiser</option>';
+
+            fundraisers.forEach(fundraiser => {
+                const option = document.createElement('option');
+                option.value = fundraiser.FUNDRAISER_ID; 
+                option.textContent = fundraiser.CAPTION; 
+                fundraiserSelect.appendChild(option);
+            });
+
+            fundraiserSelect.addEventListener('change', (event) => {
+                const selectedId = event.target.value;
+                if (selectedId) {
+                    loadFundraiserDetails(selectedId);
+                } else {
+                    clearForm();
+                }
+            });
+        }
+
+        async function loadFundraiserDetails(id) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/${id}`);
+                const { fundraiser } = await response.json(); 
+                console.log('Loaded fundraiser details:', fundraiser); 
+                populateForm(fundraiser);
+            } catch (error) {
+                console.error('Error loading fundraiser details:', error);
+            }
+        }
+
+        function populateForm(fundraiser) {
+            console.log('Fundraiser details to populate form:', fundraiser); 
+            document.getElementById('update-id').value = fundraiser.FUNDRAISER_ID;
+            document.getElementById('update-caption').value = fundraiser.CAPTION;
+            document.getElementById('update-goal').value = fundraiser.TARGET_FUNDING;
+            document.getElementById('update-city').value = fundraiser.CITY;
+            document.getElementById('update-category').value = fundraiser.CATEGORY_ID; 
+        }
+
+        function clearForm() {
+            document.getElementById('update-id').value = '';
+            document.getElementById('update-caption').value = '';
+            document.getElementById('update-goal').value = '';
+            document.getElementById('update-city').value = '';
+            document.getElementById('update-category').value = ''; 
+        }
+
+        async function fetchCategories() {
+            try {
+                const response = await fetch(apiCategoriesUrl);
+                const categories = await response.json();
+                console.log('Categories fetched:', categories); 
+                populateCategoriesDropdown(categories);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
+
+        function populateCategoriesDropdown(categories) {
+            const categorySelect = document.getElementById('update-category');
+            categorySelect.innerHTML = '<option value="">Select Category</option>'; 
+
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.CATEGORY_ID; 
+                option.textContent = category.NAME; 
+                categorySelect.appendChild(option);
+            });
+        }
+
+        document.getElementById('update-fundraiser-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch(`${apiBaseUrl}/${data.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                if (response.ok) {
+                    alert('Fundraiser updated successfully!');
+                    clearForm(); 
+                    await fetchFundraisers(); 
+                } else {
+                    alert('Error updating fundraiser: ' + response.statusText);
+                }
+            } catch (error) {
+                console.error('Error updating fundraiser:', error);
+            }
+        });
+    </script>
+</body>
+</html>

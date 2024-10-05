@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowdfunding Platform - Fundraiser Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="main.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html">Search Fundraisers</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div id="fundraiser-details"></div>
+        <button id="donate-btn">Donate</button>
+    
+        <section id="donations-section">
+            <h3>Recent Donations</h3>
+            <div id="donations-list"></div>
+        </section>
+    </main>
+    
+
+    <footer>
+        <p>&copy; 2024 Crowdfunding Platform. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    fetchDonations(); 
+
+    // Fetch donations from the API
+    async function fetchDonations() {
+        try {
+            const response = await fetch('http://localhost:3000/api/donations');
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const donations = await response.json();
+            console.log(donations); 
+            displayDonations(donations);
+        } catch (error) {
+            console.error('Error fetching donations:', error);
+            alert('Failed to load donations. Please try again later.');
+        }
+    }
+    
+
+    // Display donations in the donations-list div
+    function displayDonations(donations) {
+        const donationsList = document.getElementById('donations-list');
+        donationsList.innerHTML = ''; 
+    
+        if (donations.length === 0) {
+            donationsList.innerHTML = '<p>No donations found.</p>'; 
+            return;
+        }
+    
+        donations.forEach(donation => {
+            const donationItem = document.createElement('div');
+            donationItem.classList.add('donation-item');
+            donationItem.innerHTML = `
+                <p><strong>Name:</strong> ${donation.GIVER || 'N/A'}</p>
+                <p><strong>Amount:</strong> $${parseFloat(donation.AMOUNT).toFixed(2) || '0.00'}</p>
+                <p><strong>Date:</strong> ${donation.DATE ? new Date(donation.DATE).toLocaleDateString() : 'N/A'}</p>
+                <hr>
+            `;
+            donationsList.appendChild(donationItem); 
+        });
+    }
+    
+});
+
+const donateButton = document.getElementById('donate-btn');
+if (donateButton) {
+    donateButton.addEventListener('click', () => {
+        window.location.href = 'donation.html';
+    });
+}
+    </script>
+</body>
+</html>

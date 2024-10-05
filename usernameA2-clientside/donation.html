@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate to a Fundraiser - CrowdCare</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html">Explore Fundraisers</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Donate to Fundraiser</h1>
+        <div id="donation-section">
+            <h2 id="fundraiser-title">Fundraiser Title</h2>
+            <p id="fundraiser-description">Description of the fundraiser will go here.</p>
+            <img id="fundraiser-image" src="" alt="Fundraiser Image" style="width: 100%; max-width: 600px;">
+            
+            <form id="donation-form">
+                <label for="giver-name">Your Name:</label>
+                <input type="text" id="giver-name" name="giver-name" maxlength="100" required>
+                
+                <label for="donation-amount">Enter your donation amount:</label>
+                <input type="number" id="donation-amount" name="donation-amount" min="1" step="0.01" required>
+                
+                <label for="fundraiser-select">Select Fundraiser:</label>
+                <select id="fundraiser-select" name="fundraiser-id" required>
+                    <option value="">Select a fundraiser</option> 
+                </select>
+                
+                <button type="submit">Donate Now</button>
+            </form>
+
+            <p id="thank-you-message" style="display: none;">Thank you for your donation!</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 CrowdCare. All rights reserved.</p>
+    </footer>
+
+    <script >
+        document.addEventListener("DOMContentLoaded", () => {
+    fetchFundraisers(); 
+
+    async function fetchFundraisers() {
+        try {
+            const response = await fetch('http://localhost:3000/api/fundraisers');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const fundraisers = await response.json();
+            populateFundraiserDropdown(fundraisers);
+        } catch (error) {
+            console.error('Error fetching fundraisers:', error);
+            alert('Failed to load fundraisers. Please try again later.');
+        }
+    }
+
+    function populateFundraiserDropdown(fundraisers) {
+        const fundraiserSelect = document.getElementById('fundraiser-select');
+        fundraiserSelect.innerHTML = '<option value="">Select a fundraiser</option>'; 
+
+        fundraisers.forEach(fundraiser => {
+            const option = document.createElement('option');
+            option.value = fundraiser.FUNDRAISER_ID; 
+            option.textContent = fundraiser.CAPTION; 
+            fundraiserSelect.appendChild(option);
+        });
+    }
+
+    const donationForm = document.getElementById('donation-form');
+    donationForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); 
+        const giverName = document.getElementById('giver-name').value;
+        const donationAmount = document.getElementById('donation-amount').value;
+        const fundraiserId = document.getElementById('fundraiser-select').value; 
+
+        const donationData = {
+    giver: giverName,             
+    amount: donationAmount,        
+    fundraiser_id: fundraiserId    
+};
+
+        console.log('Giver:', giverName);             
+console.log('Amount:', donationAmount);       
+console.log('Fundraiser ID:', fundraiserId);  
+
+        try {
+            const response = await fetch('http://localhost:3000/api/donations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(donationData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            document.getElementById('thank-you-message').style.display = 'block';
+            donationForm.reset(); 
+        } catch (error) {
+            console.error('Error submitting donation:', error);
+            alert('Failed to submit donation. Please try again later.');
+        }
+    });
+});
+
+    </script>
+</body>
+</html>

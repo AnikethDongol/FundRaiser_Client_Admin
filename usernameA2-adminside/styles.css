@@ -1,0 +1,201 @@
+body {
+    background-color: #ffffff; /* White background */
+    color: #333; /* Dark text for contrast */
+}
+
+
+header {
+    background-color: #4CAF50; /* Green background */
+    padding: 1rem 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.logo {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+nav ul {
+    display: flex;
+    list-style-type: none;
+}
+
+nav ul li {
+    margin-left: 1rem;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+.fundraiser {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+}
+
+h2 {
+    color: #333;
+}
+
+p {
+    margin: 5px 0;
+}
+
+.fundraiser-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.fundraiser-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    background-color: #e0e0e0;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    background-color: #4CAF50;
+    height: 100%;
+    width: 0;
+    transition: width 0.5s ease-in-out;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input[type="text"], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Fundraiser details page specific styles */
+#fundraiser-details {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#fundraiser-details h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#fundraiser-details p {
+    margin-bottom: 10px;
+}
+
+#fundraiser-details .progress-bar {
+    margin: 20px 0;
+}
+
+#donate-btn {
+    display: block;
+    width: 200px;
+    margin: 20px auto;
+    font-size: 18px;
+    padding: 15px 30px;
+}
+
+.error {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+
+footer {
+    background-color: #333;
+    color: #ffffff;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+footer h4 {
+    color: #4CAF50;
+}
+
+footer ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+footer a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.social-icons a {
+    color: #4CAF50;
+    margin: 0 0.5rem;
+}
+
+.fundraiser-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.fundraiser-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fundraiser-card h3 {
+    margin-top: 0;
+}
+
+.fundraiser-card p {
+    margin: 5px 0;
+}
